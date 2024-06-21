@@ -4,8 +4,8 @@ import "time"
 
 type UserStore interface {
 	GetUserByEmail(email string) (*User, error)
-	// GetUserByID(id int) (*User, error)
-	// GetUser(User) error
+	GetUserByID(id int) (*User, error)
+	CreateUser(User) error
 }
 
 type RegisterUserPayload struct {
