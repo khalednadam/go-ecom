@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+	"github.com/khalednadam/ecomgo/config"
 	"github.com/khalednadam/ecomgo/service/auth"
 	"github.com/khalednadam/ecomgo/types"
 	"github.com/khalednadam/ecomgo/utils"
@@ -48,7 +49,15 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": ""})
+	secret := []byte(config.Envs.JWTSecret)
+	token, err := auth.CreateJWT(secret, user.ID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to generate jwt"))
+		fmt.Print(err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
 }
 
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
